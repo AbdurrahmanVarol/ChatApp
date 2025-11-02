@@ -24,6 +24,7 @@ export default function LoginPage() {
             });
             const { token, refreshToken, name, expire } = response.data;
             Cookies.set("token", token, { expires: new Date(expire) });
+            Cookies.set("name", name, { expires: new Date(expire) });
             Cookies.set("refreshToken", refreshToken, { expires: new Date(expire) });
             setSuccess("Login successful!");
             router.push("/home");

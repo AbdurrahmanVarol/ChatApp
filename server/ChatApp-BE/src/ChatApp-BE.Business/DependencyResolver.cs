@@ -20,5 +20,6 @@ public static class DependencyResolver
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IGenderService, GenderService>();
+        services.AddScoped<IChatService, ChatService>();
     }
 }

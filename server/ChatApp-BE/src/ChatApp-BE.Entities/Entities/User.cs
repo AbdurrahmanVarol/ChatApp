@@ -3,6 +3,7 @@ public class User : Entity<Guid>
 {
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
+    public string FullName => $"{FirstName} {LastName}";
     public string? Bio { get; set; }
     public string? ProfilePictureUrl { get; set; }
     public string? Email { get; set; }

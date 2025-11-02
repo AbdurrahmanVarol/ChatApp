@@ -17,6 +17,13 @@ public class UsersController(IUserService userService) : ControllerBase
         return Ok(user);
     }
 
+    [HttpGet("filter")]
+    public async Task<ActionResult> GetUserByName([FromQuery] string name)
+    {
+        var user = await userService.GetUsersByName(name);
+        return Ok(user);
+    }
+
     [HttpGet("info")]
     public async Task<ActionResult> GetUserById()
     {

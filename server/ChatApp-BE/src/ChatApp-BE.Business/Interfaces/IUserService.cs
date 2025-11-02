@@ -8,4 +8,5 @@ public interface IUserService
     Task CreateAsync(User user);
     Task<IEnumerable<UserResponse>> GetUsers();
     Task<UserResponse> GetUserById(Guid userId);
+    Task<IEnumerable<UserResponse>> GetUsersByName(string name);
 }

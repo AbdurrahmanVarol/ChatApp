@@ -2,7 +2,7 @@
 namespace ChatApp_BE.Entities.Entities;
 public interface IEntityTimestamps
 {
-    DateTime CreatedDate { get; set; }
-    DateTime? UpdatedDate { get; set; }
-    DateTime? DeletedDate { get; set; }
+    DateTime CreatedAt { get; set; }
+    DateTime? UpdatedAt { get; set; }
+    DateTime? DeletedAt { get; set; }
 }

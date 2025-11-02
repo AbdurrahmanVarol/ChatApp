@@ -67,4 +67,28 @@ public class UserService(IUserRepository userRepository, IMapper mapper) : IUser
 
         return mapped;
     }
+    public async Task<IEnumerable<UserResponse>> GetUsersByName(string name)
+    {
+        var users = await userRepository.GetListAsync(
+            predicate: u => u.FirstName.Contains(name) || u.LastName.Contains(name),
+            include: source => source.Include(u => u.Gender));
+        var mapped = mapper.Map<IEnumerable<UserResponse>>(users);
+        foreach (var (user, entity) in mapped.Zip(users, (dto, ent) => (dto, ent)))
+        {
+            if (!string.IsNullOrEmpty(entity.ProfilePictureUrl))
+            {
+                try
+                {
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), entity.ProfilePictureUrl.TrimStart('/', '\\'));
+                    if (File.Exists(filePath))
+                    {
+                        var bytes = await File.ReadAllBytesAsync(filePath);
+                        user.ProfilePictureBase64 = Convert.ToBase64String(bytes);
+                    }
+                }
+                catch { user.ProfilePictureBase64 = null; }
+            }
+        }
+        return mapped;
+    }
 }

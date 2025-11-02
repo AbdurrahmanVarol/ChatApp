@@ -1,6 +1,7 @@
 using ChatApp_BE.Business;
 using ChatApp_BE.DataAccess.EntityFramework.Contexts;
 using ChatApp_BE.DataAccess.EntityFramework.Seeding;
+using ChatApp_BE.WebAPI.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -58,6 +59,21 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddBusinessServices(builder.Configuration);
+builder.Services.AddSignalR();
+
+// Move AddCors BEFORE builder.Build()
+var allowedOrigin = "http://localhost:3000"; // Frontend adresiniz
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(allowedOrigin)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -68,7 +84,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
@@ -78,6 +94,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<ChatHub>("/chathub");
 using var scope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope();
 var services = scope.ServiceProvider;
 var context = services.GetRequiredService<ChatAppContext>();

@@ -21,7 +21,7 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext>(TContext context) : 
 
     protected virtual void EditEntityPropertiesToAdd(TEntity entity)
     {
-        entity.CreatedDate = DateTime.UtcNow;
+        entity.CreatedAt = DateTime.UtcNow;
     }
 
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
@@ -46,7 +46,7 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext>(TContext context) : 
 
     protected virtual void EditEntityPropertiesToUpdate(TEntity entity)
     {
-        entity.UpdatedDate = DateTime.UtcNow;
+        entity.UpdatedAt = DateTime.UtcNow;
     }
 
     public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
@@ -179,7 +179,7 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext>(TContext context) : 
 
     protected IQueryable<object>? GetRelationLoaderQuery(IQueryable query, Type navigationPropertyType)
     {
-        return ((IQueryable<object>)(query.Provider.GetType().GetMethods().First((MethodInfo m) => (object)m != null && m.Name == "CreateQuery" && m.IsGenericMethod)?.MakeGenericMethod(navigationPropertyType) ?? throw new InvalidOperationException("CreateQuery<TElement> method is not found in IQueryProvider.")).Invoke(query.Provider, new object[1] { query.Expression })).Where((object x) => !((IEntityTimestamps)x).DeletedDate.HasValue);
+        return ((IQueryable<object>)(query.Provider.GetType().GetMethods().First((MethodInfo m) => (object)m != null && m.Name == "CreateQuery" && m.IsGenericMethod)?.MakeGenericMethod(navigationPropertyType) ?? throw new InvalidOperationException("CreateQuery<TElement> method is not found in IQueryProvider.")).Invoke(query.Provider, new object[1] { query.Expression })).Where((object x) => !((IEntityTimestamps)x).DeletedAt.HasValue);
     }
 
     protected void CheckHasEntityHaveOneToOneRelation(TEntity entity)
@@ -197,17 +197,17 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext>(TContext context) : 
 
     protected virtual void EditEntityPropertiesToDelete(TEntity entity)
     {
-        entity.DeletedDate = DateTime.UtcNow;
+        entity.DeletedAt = DateTime.UtcNow;
     }
 
     protected virtual void EditRelationEntityPropertiesToCascadeSoftDelete(IEntityTimestamps entity)
     {
-        entity.DeletedDate = DateTime.UtcNow;
+        entity.DeletedAt = DateTime.UtcNow;
     }
 
     protected virtual bool IsSoftDeleted(IEntityTimestamps entity)
     {
-        return entity.DeletedDate.HasValue;
+        return entity.DeletedAt.HasValue;
     }
 
     private async Task setEntityAsSoftDeleted(IEntityTimestamps entity, bool isAsync = true, CancellationToken cancellationToken = default(CancellationToken), bool isRoot = true)
